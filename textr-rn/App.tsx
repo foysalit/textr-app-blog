@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import Constants from "expo-constants";
 import {StatusBar} from "expo-status-bar";
+import Meteor, {withTracker} from '@meteorrn/core';
 import {SafeAreaView, Dimensions} from 'react-native';
 import { Div, ThemeProvider } from "react-native-magnus";
 
@@ -9,8 +10,9 @@ import AuthPage from "./auth-page";
 
 const windowHeight = Dimensions.get('window').height;
 
-export default function App() {
-    const [user, setUser] = useState(null);
+Meteor.connect("ws://192.168.0.113:3000/websocket");
+
+function App({ user }) {
     return (
         <ThemeProvider>
             <StatusBar style="auto" />
@@ -22,11 +24,13 @@ export default function App() {
                     pt={Constants.statusBarHeight}>
                     {
                         user
-                            ? <ChatPage user={{ _id: user }} />
-                            : <AuthPage setUser={setUser} />
+                            ? <ChatPage user={user} />
+                            : <AuthPage />
                     }
                 </Div>
             </SafeAreaView>
         </ThemeProvider>
     );
 }
+
+export default withTracker(() => ({user: Meteor.user()}))(App);

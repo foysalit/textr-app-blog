@@ -1,16 +1,13 @@
-import { GiftedChat } from 'react-native-gifted-chat'
-import React, {useEffect, useCallback, useState} from 'react';
+import React, {useCallback} from 'react';
+import Meteor, {withTracker, Mongo} from '@meteorrn/core';
+import { GiftedChat } from 'react-native-gifted-chat';
 import {KeyboardAvoidingView, Platform} from "react-native";
 
-export default function ChatPage({ user }) {
-    const [messages, setMessages] = useState([]);
+const MessagesCollection = new Mongo.Collection('messages');
 
-    useEffect(() => {
-        setMessages([]);
-    }, []);
-
-    const onSend = useCallback((messages = []) => {
-        setMessages(previousMessages => GiftedChat.append(previousMessages, messages));
+function ChatPage({ user, messages }) {
+    const onSend = useCallback((allMessages = []) => {
+        Meteor.call('messages.add', allMessages.slice(-1)?.[0]?.text);
     }, []);
 
     return (
@@ -25,3 +22,12 @@ export default function ChatPage({ user }) {
         </>
     );
 };
+
+export default withTracker(() => {
+    const messagesReady = Meteor.subscribe('messages').ready();
+    const messages = MessagesCollection.find().fetch().map(message => ({
+        ...message,
+        user: Meteor.users.findOne(message.userId)
+    }));
+    return {loading: !messagesReady, messages};
+})(ChatPage);

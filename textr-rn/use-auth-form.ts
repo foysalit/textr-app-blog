@@ -1,4 +1,6 @@
 import {useReducer} from "react";
+import Meteor, { Accounts } from '@meteorrn/core';
+
 
 type AuthInputPayload = {
     field: 'email' | 'password' | 'username',
@@ -19,7 +21,7 @@ type AuthAction =
     | { type: 'apiError', payload: { error: string } }
     | { type: 'input', payload: AuthInputPayload };
 
-export const useAuthForm = (setUser) => {
+export const useAuthForm = () => {
     const reducer = (state: AuthState, action: AuthAction): AuthState => {
         switch (action.type) {
             case 'input':
@@ -43,7 +45,7 @@ export const useAuthForm = (setUser) => {
         password: '',
         callingApi: false,
         error: '',
-        form: 'login'
+        form: 'signup'
     };
     const [{
         username,
@@ -62,16 +64,20 @@ export const useAuthForm = (setUser) => {
         error,
         form,
         handleLogin: () => {
-            if (!email || !username) {
+            if (!email || !password) {
                 dispatch({type: 'apiError', payload: {error: 'Please fill in all the input fields'}});
                 return;
             }
             dispatch({type: 'callingApi'});
             //    Implement meteor login here
-            setTimeout(() => {
-                dispatch({type: 'apiSuccess'});
-                setUser({username});
-            }, 500);
+            Meteor.loginWithPassword(email, password, (err) => {
+                if (err) {
+                    dispatch({type: 'apiError', payload: {error: err.message}});
+                    return;
+                }
+
+                dispatch({ type: 'apiSuccess' });
+            });
         },
         handleSignup: () => {
             if (!email || !password || !username) {
@@ -80,10 +86,14 @@ export const useAuthForm = (setUser) => {
             }
             dispatch({type: 'callingApi'});
             //    Implement meteor login here
-            setTimeout(() => {
-                dispatch({type: 'apiSuccess'});
-                setUser({username});
-            }, 500);
+            Accounts.createUser({username, email, password}, (err) => {
+                if (err) {
+                    dispatch({type: 'apiError', payload: {error: err.message}});
+                    return;
+                }
+
+                dispatch({ type: 'apiSuccess' });
+            });
         },
         handleUsernameInput: (value) => handleInput('username', value),
         handleEmailInput: (value) => handleInput('email', value),
