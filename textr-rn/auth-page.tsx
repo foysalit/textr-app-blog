@@ -4,7 +4,7 @@ import {KeyboardAvoidingView} from "react-native";
 
 import {useAuthForm} from "./use-auth-form";
 
-export default function AuthPage({ setUser }) {
+export default function AuthPage() {
     const {
         error,
         email,
@@ -18,7 +18,7 @@ export default function AuthPage({ setUser }) {
         handleEmailInput,
         handleUsernameInput,
         handlePasswordInput
-    } = useAuthForm(setUser);
+    } = useAuthForm();
     return (
         <KeyboardAvoidingView behavior={'padding'}>
             <Div px="lg" bg="white">

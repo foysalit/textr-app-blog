@@ -1,7 +1,6 @@
 accounts-base@1.7.0
 accounts-password@1.6.2
 allow-deny@1.1.0
-autopublish@1.0.7
 autoupdate@1.6.0
 babel-compiler@7.5.3
 babel-runtime@1.5.0
@@ -20,7 +19,7 @@ ddp-rate-limiter@1.0.9
 ddp-server@2.3.2
 deps@1.0.12
 diff-sequence@1.1.1
-dynamic-import@0.5.3
+dynamic-import@0.5.2
 ecmascript@0.14.3
 ecmascript-runtime@0.7.0
 ecmascript-runtime-client@0.11.0
