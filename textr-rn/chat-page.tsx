@@ -3,6 +3,7 @@ import Meteor, {withTracker} from '@meteorrn/core';
 import { GiftedChat, User } from 'react-native-gifted-chat';
 import {KeyboardAvoidingView, Platform} from "react-native";
 import {Message, MessagesCollection} from "./messages";
+import NotificationSetting from "./notification-setting";
 
 type ChatPageProps = {
     user: User,
@@ -16,6 +17,7 @@ function ChatPage({ user, messages }: ChatPageProps) {
 
     return (
         <>
+            <NotificationSetting />
             <GiftedChat
                 user={user}
                 messages={messages}
@@ -34,7 +36,7 @@ export default withTracker(() => {
         const user = Meteor.users.findOne(message.userId);
         return {
             ...message,
-            user: {name: user.username, _id: user._id}
+            user: {name: user?.username, _id: user?._id}
         };
     });
     return {loading: !messagesReady, messages, user};
